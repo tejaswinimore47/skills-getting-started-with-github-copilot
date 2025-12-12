@@ -24,34 +24,92 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // build participants html
         const participants = details.participants || [];
-        let participantsHtml = `<div class="participants"><h5>Participants <span class="count">${participants.length}</span></h5>`;
+
+        // create participants container so we can attach handlers to delete buttons
+        const participantsWrapper = document.createElement("div");
+        participantsWrapper.className = "participants";
+
+        const h5 = document.createElement("h5");
+        h5.innerHTML = `Participants <span class="count">${participants.length}</span>`;
+        participantsWrapper.appendChild(h5);
+
         if (participants.length) {
-          participantsHtml += "<ul>";
-          participantsHtml += participants
-            .map((p) => {
-              const display = (p && p.name) || p || "";
-              const initials = display
-                .split(/[\s@]+/)
-                .filter(Boolean)
-                .slice(0, 2)
-                .map((s) => s[0].toUpperCase())
-                .join("");
-              return `<li><span class="avatar">${initials || "?"}</span>${display}</li>`;
-            })
-            .join("");
-          participantsHtml += "</ul>";
+          const ul = document.createElement("ul");
+          participants.forEach((p) => {
+            const display = (p && p.name) || p || "";
+            const initials = display
+              .split(/[\s@]+/)
+              .filter(Boolean)
+              .slice(0, 2)
+              .map((s) => s[0].toUpperCase())
+              .join("");
+
+            const li = document.createElement("li");
+
+            const avatar = document.createElement("span");
+            avatar.className = "avatar";
+            avatar.textContent = initials || "?";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "participant-name";
+            nameSpan.textContent = display;
+
+            const removeBtn = document.createElement("button");
+            removeBtn.className = "participant-remove-btn";
+            removeBtn.title = "Remove participant";
+            removeBtn.innerHTML = "✖";
+
+            // when clicked, call unregister endpoint
+            removeBtn.addEventListener("click", async () => {
+              const emailForRemove = (p && p.email) ? p.email : p;
+              if (!emailForRemove) return;
+              try {
+                const resp = await fetch(
+                  `/activities/${encodeURIComponent(name)}/participants?email=${encodeURIComponent(emailForRemove)}`,
+                  { method: "DELETE" }
+                );
+                const result = await resp.json();
+                if (resp.ok) {
+                  messageDiv.textContent = result.message;
+                  messageDiv.className = "success";
+                  messageDiv.classList.remove("hidden");
+                  // refresh activities list
+                  fetchActivities();
+                } else {
+                  messageDiv.textContent = result.detail || "Could not remove participant";
+                  messageDiv.className = "error";
+                  messageDiv.classList.remove("hidden");
+                }
+                setTimeout(() => messageDiv.classList.add("hidden"), 5000);
+              } catch (err) {
+                console.error(err);
+                messageDiv.textContent = "Failed to remove participant.";
+                messageDiv.className = "error";
+                messageDiv.classList.remove("hidden");
+                setTimeout(() => messageDiv.classList.add("hidden"), 5000);
+              }
+            });
+
+            li.appendChild(avatar);
+            li.appendChild(nameSpan);
+            li.appendChild(removeBtn);
+            ul.appendChild(li);
+          });
+          participantsWrapper.appendChild(ul);
         } else {
-          participantsHtml += `<div class="none">No participants yet</div>`;
+          const none = document.createElement("div");
+          none.className = "none";
+          none.textContent = "No participants yet";
+          participantsWrapper.appendChild(none);
         }
-        participantsHtml += "</div>";
 
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          ${participantsHtml}
         `;
+        activityCard.appendChild(participantsWrapper);
 
         activitiesList.appendChild(activityCard);
 
@@ -88,6 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // refresh activities so the new participant appears immediately
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";

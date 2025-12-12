@@ -95,8 +95,8 @@ section h3 {
 
 /* bullet list styling */
 .activity-card .participants ul {
-  list-style: disc;
-  padding-left: 20px;
+  list-style: none;
+  padding-left: 0;
   margin: 6px 0 0 0;
 }
 
@@ -124,6 +124,20 @@ section h3 {
   font-size: 13px;
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* remove / delete button next to participant */
+.participant-remove-btn {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+.participant-remove-btn:hover {
+  background: rgba(198,40,40,0.08);
 }
 
 /* empty/none state */
