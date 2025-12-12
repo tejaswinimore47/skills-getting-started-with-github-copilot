@@ -65,13 +65,86 @@ section h3 {
   background-color: #f9f9f9;
 }
 
-.activity-card h4 {
-  margin-bottom: 10px;
-  color: #0066cc;
+/* participants section inside activity cards */
+.activity-card .participants {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #eee;
+  display: block;
 }
 
-.activity-card p {
-  margin-bottom: 8px;
+.activity-card .participants h5 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #37474f;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* nice little badge for count */
+.activity-card .participants .count {
+  background: #e3f2fd;
+  color: #0d47a1;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #bbdefb;
+}
+
+/* bullet list styling */
+.activity-card .participants ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 6px 0 0 0;
+}
+
+/* participant item: small avatar + name */
+.activity-card .participants li {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #455a64;
+  font-size: 14px;
+}
+
+/* small circular avatar (initials or image) */
+.activity-card .participants .avatar {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#90caf9,#42a5f5);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* remove / delete button next to participant */
+.participant-remove-btn {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+.participant-remove-btn:hover {
+  background: rgba(198,40,40,0.08);
+}
+
+/* empty/none state */
+.activity-card .participants .none {
+  color: #9e9e9e;
+  font-style: italic;
+  font-size: 13px;
 }
 
 .form-group {
