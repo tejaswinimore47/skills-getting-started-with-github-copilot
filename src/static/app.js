@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
+      // reset select options
+      activitySelect.innerHTML = '<option value="">Select an activity</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -20,11 +22,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // build participants html
+        const participants = details.participants || [];
+        let participantsHtml = `<div class="participants"><h5>Participants <span class="count">${participants.length}</span></h5>`;
+        if (participants.length) {
+          participantsHtml += "<ul>";
+          participantsHtml += participants
+            .map((p) => {
+              const display = (p && p.name) || p || "";
+              const initials = display
+                .split(/[\s@]+/)
+                .filter(Boolean)
+                .slice(0, 2)
+                .map((s) => s[0].toUpperCase())
+                .join("");
+              return `<li><span class="avatar">${initials || "?"}</span>${display}</li>`;
+            })
+            .join("");
+          participantsHtml += "</ul>";
+        } else {
+          participantsHtml += `<div class="none">No participants yet</div>`;
+        }
+        participantsHtml += "</div>";
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          ${participantsHtml}
         `;
 
         activitiesList.appendChild(activityCard);
